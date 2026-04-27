@@ -1,65 +1,90 @@
+
+"use client";
+import { Parallax, ParallaxLayer } from '@react-spring/parallax';
+import { motion } from "framer-motion";
 import Image from "next/image";
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <div className="relative min-h-screen w-full overflow-x-hidden bg-gradient-to-b from-black via-indigo-950 to-black font-sans">
+      {/* Parallax Space Background */}
+      <Parallax pages={1.2} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0 }}>
+        <ParallaxLayer offset={0} speed={0.1} style={{ opacity: 0.5 }}>
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_60%_20%,rgba(123,47,255,0.15)_0%,transparent_70%)]" />
+        </ParallaxLayer>
+        <ParallaxLayer offset={0} speed={0.2} style={{ opacity: 0.3 }}>
+          <div className="absolute left-1/2 top-1/3 w-[600px] h-[600px] -translate-x-1/2 rounded-full bg-indigo-800 blur-3xl opacity-40" />
+        </ParallaxLayer>
+        <ParallaxLayer offset={0} speed={0.4} style={{ opacity: 0.2 }}>
+          <div className="absolute right-0 bottom-0 w-[400px] h-[400px] rounded-full bg-blue-500 blur-2xl opacity-30" />
+        </ParallaxLayer>
+      </Parallax>
+
+      {/* Hero Section */}
+      <section className="relative z-10 flex flex-col items-center justify-center min-h-screen px-6 pt-32 pb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
+          className="flex flex-col md:flex-row items-center gap-16 w-full max-w-6xl"
+        >
+          {/* Text Column */}
+          <div className="flex-1 flex flex-col items-start gap-6">
+            <span className="uppercase tracking-widest text-sm text-cyan-400 font-mono">AI Engineer · Software Engineer</span>
+            <h1 className="text-5xl md:text-7xl font-extrabold bg-gradient-to-r from-white via-cyan-400 to-purple-400 bg-clip-text text-transparent leading-tight drop-shadow-lg">
+              Thakur<br />Aditya<br />Singh
+            </h1>
+            <div className="flex items-center gap-3 text-lg text-cyan-300 font-mono">
+              <span className="inline-block w-3 h-3 rounded-full bg-green-400 animate-pulse"></span>
+              Full-Stack · AI · Cloud · DevOps
+            </div>
+            <p className="max-w-xl text-lg text-zinc-300">
+              Architecting enterprise-grade applications and AI systems at <span className="text-cyan-400 font-semibold">LTIMindtree</span>.<br />
+              Passionate about building scalable platforms that bridge the gap between artificial intelligence and real-world impact.
+            </p>
+            <div className="flex gap-4 mt-4">
+              <a href="#projects" className="px-8 py-3 rounded bg-gradient-to-r from-cyan-400 to-purple-500 text-white font-bold shadow-lg hover:scale-105 transition-transform">EXPLORE WORK</a>
+              <a href="#contact" className="px-8 py-3 rounded border border-cyan-400 text-cyan-300 font-bold hover:bg-cyan-900/30 transition">TRANSMIT SIGNAL</a>
+            </div>
+          </div>
+          {/* Image Column */}
+          <div className="flex-1 flex items-center justify-center relative">
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 1.2, type: "spring" }}
+              className="relative w-80 h-80 md:w-96 md:h-96 rounded-full shadow-2xl border-4 border-cyan-400/30 overflow-hidden bg-gradient-to-br from-indigo-900 via-black to-purple-900"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+              {/* Replace src with your image path */}
+              <Image
+                src="/aditya.jpeg"
+              
+                alt="Thakur Aditya Singh"
+                fill
+                className="object-cover object-top"
+                priority
+              />
+              {/* Animated ring */}
+              <motion.div
+                className="absolute inset-0 rounded-full border-4 border-cyan-400/40 animate-spin-slow"
+                style={{ borderStyle: "dashed" }}
+                animate={{ rotate: 360 }}
+                transition={{ repeat: Infinity, duration: 12, ease: "linear" }}
+              />
+              {/* Floating planet */}
+              <motion.div
+                className="absolute -right-10 bottom-10 w-16 h-16 rounded-full bg-gradient-to-br from-purple-400 to-cyan-400 blur-xl opacity-60"
+                animate={{ y: [0, -20, 0] }}
+                transition={{ repeat: Infinity, duration: 4 }}
+              />
+            </motion.div>
+          </div>
+        </motion.div>
+        {/* Parallax stars overlay (placeholder, can be replaced with canvas) */}
+        <div className="pointer-events-none absolute inset-0 z-0">
+          {/* Add a canvas or SVG for animated stars here if desired */}
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+      </section>
     </div>
   );
 }
