@@ -36,6 +36,7 @@ export default function HeroSection() {
   const [displayed, setDisplayed] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [mouseClient, setMouseClient] = useState({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { scrollY } = useScroll();
@@ -60,24 +61,250 @@ export default function HeroSection() {
     return () => clearTimeout(timeout);
   }, [displayed, isDeleting, roleIndex]);
 
-  // Mouse parallax for floating icons
+  // Mouse tracking for both parallax and cursor
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
+      setMouseClient({ x: e.clientX, y: e.clientY });
       if (!containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
       setMousePos({
-        x: ((e.clientX - rect.left) / rect.width - 0.5) * 20,
-        y: ((e.clientY - rect.top) / rect.height - 0.5) * 20,
+        x: ((e.clientX - rect.left) / rect.width - 0.5) * 40, // Increased intensity
+        y: ((e.clientY - rect.top) / rect.height - 0.5) * 40,
       });
     };
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
+  // 5-connection web system with purple color - section-specific
+  useEffect(() => {
+    let connectionCount = 0;
+    let firstClick: { x: number; y: number } | null = null;
+    let firstWebDesign: HTMLElement | null = null;
+    let currentSection: HTMLElement | null = null;
+
+    const handleClick = (e: MouseEvent) => {
+      // Find the section containing the click
+      const target = e.target as HTMLElement;
+      currentSection = target.closest('section');
+      
+      if (!currentSection) return;
+
+      // Find or create web container for this specific section
+      let webContainer = currentSection.querySelector('.section-web-container') as HTMLElement;
+      if (!webContainer) {
+        webContainer = document.createElement('div');
+        webContainer.className = 'section-web-container';
+        webContainer.style.cssText = `
+          position: absolute;
+          inset: 0;
+          pointer-events: none;
+          z-index: 50;
+          overflow: visible;
+        `;
+        currentSection.style.position = 'relative';
+        currentSection.appendChild(webContainer);
+      }
+
+      // Get section's position for relative positioning
+      const sectionRect = currentSection.getBoundingClientRect();
+      const scrollX = window.scrollX;
+      const scrollY = window.scrollY;
+      
+      // Calculate positions relative to the section
+      const x = e.clientX - sectionRect.left;
+      const y = e.clientY - sectionRect.top;
+
+      if (!firstClick) {
+        // First click - create web design
+        firstClick = { x, y };
+
+        firstWebDesign = document.createElement('div');
+        firstWebDesign.className = 'spider-web-design';
+        firstWebDesign.style.cssText = `
+          position: absolute;
+          width: 20px;
+          height: 20px;
+          left: ${x - 10}px;
+          top: ${y - 10}px;
+          pointer-events: none;
+          z-index: 51;
+          animation: webDesignSpin 3s linear infinite;
+        `;
+        
+        const webColor = connectionCount >= 5 ? '147, 51, 234' : '57, 255, 20'; // Purple or green
+        
+        firstWebDesign.innerHTML = `
+          <svg width="20" height="20" viewBox="0 0 20 20" style="position: absolute;">
+            <circle cx="10" cy="10" r="8" fill="none" stroke="rgba(${webColor},0.6)" stroke-width="1"/>
+            <circle cx="10" cy="10" r="5" fill="none" stroke="rgba(${webColor},0.4)" stroke-width="0.5"/>
+            <circle cx="10" cy="10" r="2" fill="rgba(${webColor},0.8)"/>
+            <path d="M10,2 L10,18 M2,10 L18,10 M4,4 L16,16 M16,4 L4,16" stroke="rgba(${webColor},0.3)" stroke-width="0.5"/>
+          </svg>
+        `;
+
+        webContainer.appendChild(firstWebDesign);
+      } else {
+        // Second click - connect webs
+        const distance = Math.sqrt(Math.pow(x - firstClick.x, 2) + Math.pow(y - firstClick.y, 2));
+        const angle = Math.atan2(y - firstClick.y, x - firstClick.x) * 180 / Math.PI;
+
+        connectionCount++;
+
+        // Create web line
+        const web = document.createElement('div');
+        web.className = 'spider-web';
+        const webColor = connectionCount >= 5 ? '147, 51, 234' : '57, 255, 20'; // Purple or green
+        
+        web.style.cssText = `
+          position: absolute;
+          height: 3px;
+          background: linear-gradient(90deg, 
+            rgba(${webColor},0.8) 0%, 
+            rgba(${webColor},0.6) 25%, 
+            rgba(${webColor},0.4) 50%, 
+            rgba(${webColor},0.6) 75%, 
+            rgba(${webColor},0.8) 100%
+          );
+          transform-origin: left center;
+          pointer-events: none;
+          z-index: 50;
+          box-shadow: 0 0 8px rgba(${webColor},0.6), inset 0 0 4px rgba(${webColor},0.4);
+        `;
+
+        web.style.width = `${distance}px`;
+        web.style.left = `${firstClick.x}px`;
+        web.style.top = `${firstClick.y}px`;
+        web.style.transform = `rotate(${angle}deg)`;
+
+        webContainer.appendChild(web);
+
+        // Create end web design
+        const endWebDesign = document.createElement('div');
+        endWebDesign.className = 'spider-web-design';
+        endWebDesign.style.cssText = `
+          position: absolute;
+          width: 24px;
+          height: 24px;
+          left: ${x - 12}px;
+          top: ${y - 12}px;
+          pointer-events: none;
+          z-index: 52;
+          animation: webDesignPulse 2s ease-in-out infinite;
+        `;
+        
+        endWebDesign.innerHTML = `
+          <svg width="24" height="24" viewBox="0 0 24 24" style="position: absolute;">
+            <circle cx="12" cy="12" r="10" fill="none" stroke="rgba(${webColor},0.8)" stroke-width="1.5"/>
+            <circle cx="12" cy="12" r="7" fill="none" stroke="rgba(${webColor},0.6)" stroke-width="1"/>
+            <circle cx="12" cy="12" r="4" fill="none" stroke="rgba(${webColor},0.4)" stroke-width="0.5"/>
+            <circle cx="12" cy="12" r="2" fill="rgba(${webColor},0.9)"/>
+            <path d="M12,2 L12,22 M2,12 L22,12 M5,5 L19,19 M19,5 L5,19" stroke="rgba(${webColor},0.5)" stroke-width="0.8"/>
+            <path d="M12,2 L8,8 L16,8 Z M12,22 L8,16 L16,16 Z M2,12 L8,8 L8,16 Z M22,12 L16,8 L16,16 Z" 
+                  stroke="rgba(${webColor},0.3)" stroke-width="0.5" fill="rgba(${webColor},0.1)"/>
+          </svg>
+        `;
+
+        webContainer.appendChild(endWebDesign);
+
+        // Reset for next web
+        firstClick = null;
+        firstWebDesign = null;
+      }
+    };
+
+    document.addEventListener('click', handleClick);
+
+    return () => {
+      document.removeEventListener('click', handleClick);
+    };
+  }, []);
+
   return (
-    <section id="home" className="section min-h-screen relative overflow-hidden" style={{ background: "#000000" }}>
+    <section 
+      id="home" 
+      ref={containerRef}
+      className="section min-h-screen relative overflow-hidden" 
+      style={{ background: "#000000", cursor: "none" }}
+    >
+      {/* Spider Cursor - Desktop & Mobile */}
+      <motion.div
+        className="fixed pointer-events-none z-[100] block"
+        animate={{ x: mouseClient.x - 15, y: mouseClient.y - 15 }}
+        transition={{ type: "spring", damping: 25, stiffness: 250, mass: 0.5 }}
+      >
+        <div className="relative w-8 h-8">
+          {/* Spider Body */}
+          <div className="absolute inset-0 bg-[#39ff14] rounded-full blur-[1px] opacity-80" />
+          <div className="absolute inset-[30%] bg-black rounded-full" />
+          
+          {/* Spider Legs */}
+          {[...Array(8)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-4 h-[1px] bg-[#39ff14]/60"
+              style={{
+                left: "50%",
+                top: "50%",
+                transformOrigin: "left center",
+                rotate: i * 45,
+              }}
+              animate={{
+                scaleX: [1, 1.4, 1],
+                rotate: [i * 45, i * 45 + (i % 2 === 0 ? 10 : -10), i * 45],
+              }}
+              transition={{
+                duration: 0.5,
+                repeat: Infinity,
+                delay: i * 0.05,
+              }}
+            />
+          ))}
+          {/* Cursor Glow */}
+          <div className="absolute inset-[-10px] bg-[#39ff14]/20 rounded-full blur-xl" />
+        </div>
+      </motion.div>
+
+            
+      {/* Web Animations */}
+      <style jsx>{`
+        @keyframes webDesignSpin {
+          0% { 
+            transform: rotate(0deg); 
+          }
+          100% { 
+            transform: rotate(360deg); 
+          }
+        }
+        
+        @keyframes webDesignPulse {
+          0%, 100% { 
+            transform: scale(1); 
+            opacity: 0.8; 
+          }
+          50% { 
+            transform: scale(1.2); 
+            opacity: 1; 
+          }
+        }
+        
+        .spider-web {
+          box-shadow: 0 0 12px rgba(57,255,20,0.8), inset 0 0 6px rgba(57,255,20,0.4);
+        }
+        
+        .spider-web-design {
+          filter: drop-shadow(0 0 8px rgba(57,255,20,0.6));
+        }
+      `}</style>
+
       {/* Background elements */}
-      <div className="absolute inset-0 pointer-events-none">
+      <div 
+        className="absolute inset-0 pointer-events-none"
+        style={{ 
+          transform: `translate(${mousePos.x * 0.5}px, ${mousePos.y * 0.5}px)`,
+          transition: "transform 0.2s ease-out"
+        }}
+      >
         <div
           className="absolute rounded-full"
           style={{
@@ -147,8 +374,13 @@ export default function HeroSection() {
 
       {/* Main content */}
       <motion.div
-        style={{ y: y1, opacity }}
-        className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-16 w-full max-w-6xl px-6 mx-auto hero-container"
+        style={{ 
+          y: y1, 
+          opacity,
+          transform: `perspective(1000px) rotateX(${-mousePos.y * 0.1}deg) rotateY(${mousePos.x * 0.1}deg)`,
+          transition: "transform 0.1s ease-out"
+        }}
+        className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-16 w-full max-w-6xl px-6 md:pl-20 lg:pl-32 mx-auto hero-container"
       >
         {/* Left: Text */}
         <div className="flex-1 flex flex-col items-center md:items-start text-center md:text-left gap-2 hero-text-content">
