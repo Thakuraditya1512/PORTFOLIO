@@ -6,11 +6,12 @@ export default function SpaceLoading() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 4000);
+    const handleComplete = () => {
+      setTimeout(() => setIsLoading(false), 800);
+    };
 
-    return () => clearTimeout(timer);
+    window.addEventListener("loading-complete", handleComplete);
+    return () => window.removeEventListener("loading-complete", handleComplete);
   }, []);
 
   if (!isLoading) return null;
@@ -99,22 +100,12 @@ export default function SpaceLoading() {
       <script dangerouslySetInnerHTML={{
         __html: `
         const lines = [
+          { text: '<span class="cmt">// BOOTING SYSTEM...</span>', raw: '// BOOTING SYSTEM...' },
+          { text: '<span class="kw">const</span> <span class="var">user</span> = <span class="str">"techee"</span>;', raw: 'const user = "techee";' },
+          { text: '<span class="fn">sayHello</span>(<span class="var">user</span>); <span class="cmt">// hello techee welcome to my profiel</span>', raw: 'sayHello(user); // hello techee welcome to my profiel' },
+          { text: '<span class="kw">let</span> <span class="var">session</span> = <span class="num">32489273492749</span>;', raw: 'let session = 32489273492749;' },
           { text: '', raw: '' },
-          { text: '<span class="kw">import</span> <span class="fn">SpiderFix</span> <span class="kw">from</span> <span class="str">"spider-fix"</span>;', raw: "import SpiderFix from 'spider-fix';" },
-          { text: '', raw: '' },
-          { text: '<span class="kw">const</span> <span class="type">App</span> = () <span class="kw">=></span> {', raw: 'const App = () => {' },
-          { text: '  <span class="kw">let</span> <span class="var">bugs</span> = <span class="num">42</span>;', raw: '  let bugs = 42;' },
-          { text: '  <span class="kw">const</span> <span class="fn">fixBugs</span> = (<span class="var">count</span>) <span class="kw">=></span> {', raw: '  const fixBugs = (count) => {' },
-          { text: '    <span class="var">count</span>(<span class="num">0</span>  <span class="cmt">// ← missing closing paren</span>', raw: '    count(0  // missing )' },
-          { text: '    <span class="kw">return</span> <span class="str">"all good"</span>;', raw: '    return "all good";' },
-          { text: '  };', raw: '  };' },
-          { text: '', raw: '' },
-          { text: '  <span class="fn">fixBugs</span>(<span class="var">bugs</span>);', raw: '  fixBugs(bugs);' },
-          { text: '  <span class="kw">require</span>(<span class="str">"spider-fix"</span>);', raw: '  require("spider-fix");' },
-          { text: '  <span class="kw">return</span> <span class="str">"done"</span>;', raw: '  return "done";' },
-          { text: '};', raw: '};' },
-          { text: '', raw: '' },
-          { text: '<span class="fn">App</span>();', raw: 'App();' },
+          { text: '<span class="kw">throw</span> <span class="kw">new</span> <span class="type">Error</span>(<span class="str">"oohhh shittt error"</span>);', raw: 'throw new Error("oohhh shittt error");' },
         ];
 
         const editor = document.getElementById('editor');
@@ -197,11 +188,11 @@ export default function SpaceLoading() {
           const rect = loader.getBoundingClientRect();
 
           const stages = [
-            { right: '20px', bottom: '80px', size: '100px', dur: 1200 },
-            { right: '40px', bottom: '120px', size: '130px', dur: 900 },
-            { right: '60px', bottom: '180px', size: '160px', dur: 700 },
-            { right: '80px', bottom: '240px', size: '200px', dur: 600 },
-            { right: '100px', bottom: '280px', size: '240px', dur: 500 },
+            { right: '20px', bottom: '40px', size: '100px', dur: 1200 },
+            { right: '40px', bottom: '80px', size: '200px', dur: 900 },
+            { right: '80px', bottom: '120px', size: '350px', dur: 800 },
+            { right: '150px', bottom: '150px', size: '600px', dur: 700 },
+            { right: '200px', bottom: '200px', size: '900px', dur: 600 },
           ];
 
           function nextStage() {
@@ -231,6 +222,10 @@ export default function SpaceLoading() {
             spider.style.right = '-200px';
             overlay.style.pointerEvents = 'auto';
             overlay.style.opacity = '1';
+            
+            setTimeout(() => {
+              window.dispatchEvent(new CustomEvent('loading-complete'));
+            }, 1000);
           }, 1000);
         }
 

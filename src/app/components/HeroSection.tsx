@@ -100,6 +100,20 @@ export default function HeroSection() {
         />
       </div>
 
+      {/* Unique Mobile Scanning Line */}
+      <motion.div
+        className="absolute left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#39ff14]/30 to-transparent z-0 md:hidden"
+        animate={{
+          top: ["0%", "100%", "0%"],
+          opacity: [0, 0.5, 0],
+        }}
+        transition={{
+          duration: 4,
+          repeat: Infinity,
+          ease: "linear",
+        }}
+      />
+
       {/* Floating tech icons */}
       {FLOATING_TECH.map(({ Icon, color, x, y, size }, i) => (
         <motion.div
@@ -133,11 +147,11 @@ export default function HeroSection() {
 
       {/* Main content */}
       <motion.div
-        style={{ y: y1, opacity, marginLeft: "60px" }}
+        style={{ y: y1, opacity }}
         className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-16 w-full max-w-6xl px-6 mx-auto hero-container"
       >
         {/* Left: Text */}
-        <div className="flex-1 flex flex-col items-start gap-2 hero-text-content">
+        <div className="flex-1 flex flex-col items-center md:items-start text-center md:text-left gap-2 hero-text-content">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -239,7 +253,7 @@ export default function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7 }}
-            className="flex flex-wrap gap-4 mt-2"
+            className="flex flex-wrap justify-center md:justify-start gap-4 mt-2"
           >
             <a href="#projects" className="btn-neon-glow" style={{ padding: "12px 28px", fontSize: "0.9rem", display: "inline-flex", alignItems: "center", gap: 8 }}>
               <span style={{ position: "relative", zIndex: 1 }}>View My Work</span>
@@ -279,12 +293,12 @@ export default function HeroSection() {
           </motion.div>
         </div>
 
-        {/* Right: Avatar area */}
+        {/* Right: Avatar area (Hidden on mobile) */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.3, duration: 0.8, type: "spring" }}
-          className="flex-shrink-0 flex items-center justify-center relative hero-avatar-wrapper"
+          className="hidden md:flex flex-shrink-0 items-center justify-center relative hero-avatar-wrapper"
           style={{ width: 340, height: 340 }}
         >
           {/* Rotating rings */}
